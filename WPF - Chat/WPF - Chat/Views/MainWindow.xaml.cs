@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace WPF___Chat
+namespace WPF___Chat.Views
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml

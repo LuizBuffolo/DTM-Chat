@@ -1,9 +1,16 @@
 ﻿<Application x:Class="WPF___Chat.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:viewModels="clr-namespace:WPF___Chat.ViewModels"   
              xmlns:local="clr-namespace:WPF___Chat"
-             StartupUri="MainWindow.xaml">
+             xmlns:dialogYesNo="clr-namespace:WPF___Chat.Dialogs.DialogYesNo"   
+             StartupUri="Views/MainWindow.xaml">
     <Application.Resources>
-         
+        <viewModels:MainWindowViewModel x:Key="MainWindowViewModel" />
+        <DataTemplate DataType="{x:Type dialogYesNo:DialogYesNoViewModel}">
+            <dialogYesNo:DialogYesNoView></dialogYesNo:DialogYesNoView>
+        </DataTemplate>
+
     </Application.Resources>
 </Application>
+ 

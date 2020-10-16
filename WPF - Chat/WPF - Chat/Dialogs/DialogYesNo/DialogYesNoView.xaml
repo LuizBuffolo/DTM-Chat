@@ -4,15 +4,21 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:WPF___Chat.Dialogs.DialogYesNo"
-             mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
-    <Grid Margin="4" HorizontalAlignment="Center" VerticalAlignment="Center">
-        <Button Content="Yes" HorizontalAlignment="Left" Margin="135,70,0,0" VerticalAlignment="Top" Width="75"   
-            Command="{Binding YesCommand}"   
-            CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"/>
-        <Button Content="No" HorizontalAlignment="Left" Margin="215,70,0,0" VerticalAlignment="Top" Width="75"   
+             mc:Ignorable="d" Height="373" Width="728">
+    <Grid Margin="10,10,26,10" HorizontalAlignment="Center" VerticalAlignment="Center" Height="353" Width="764">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="108*"/>
+            <ColumnDefinition Width="37*"/>
+        </Grid.ColumnDefinitions>
+        <Button Content="Send" HorizontalAlignment="Left" Margin="556,284,0,0" VerticalAlignment="Top" Width="75"   
+            Command="{Binding Btn_Send}" Grid.ColumnSpan="2"/>
+        <Button Content="Exit" HorizontalAlignment="Left" Margin="82,284,0,0" VerticalAlignment="Top" Width="75"   
             Command="{Binding NoCommand}"  
-            CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"/>
+            CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}" Grid.Column="1"/>
+        <TextBox x:Name="txb_Chat" Text="{Binding chatBox, Mode = TwoWay}" HorizontalAlignment="Left" Height="158" Margin="50,56,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="676" Grid.ColumnSpan="2"/>
+        <TextBox x:Name="txb_Send" Text="{Binding sendBox, Mode = TwoWay}" HorizontalAlignment="Left" Height="27" Margin="50,252,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="676" Grid.ColumnSpan="2"/>
+        <Label x:Name="lbl_StatusTtl" Content="Status:" HorizontalAlignment="Left" Height="23" Margin="50,28,0,0" VerticalAlignment="Top" Width="82"/>
+        <Label x:Name="lbl_Status" Content="Offline" HorizontalAlignment="Left" Height="23" Margin="94,28,0,0" VerticalAlignment="Top" Width="82"/>
 
     </Grid>
 </UserControl>

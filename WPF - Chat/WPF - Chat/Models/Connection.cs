@@ -17,9 +17,14 @@ namespace WPF___Chat.Models
         private IPEndPoint listenerEndpoint;
         private IPEndPoint broadCast = new IPEndPoint(IPAddress.Broadcast, 30678);
         private IPEndPoint broadCastEndpoint = new IPEndPoint(IPAddress.Any, 30678);
+        private IPEndPoint broadCastII = new IPEndPoint(IPAddress.Broadcast, 30679);
+        private IPEndPoint broadCastEndpointII = new IPEndPoint(IPAddress.Any, 30679);
 
         private UdpClient udpClient = new UdpClient();
         private UdpClient udpListener = null;
+        private UdpClient udpClientII = new UdpClient();
+        private UdpClient udpListenerII = null;
+
         private TcpClient tcpClient = null;
         private TcpListener tcpListener = null;
 
@@ -50,7 +55,6 @@ namespace WPF___Chat.Models
             {
 
                 byte[] msg = new byte[1024];
-                byte[] sendAfter = Encoding.ASCII.GetBytes("<<<<UDP AFTER CONECTED>>>>");
                 byte[] send = Encoding.ASCII.GetBytes("<<<<UDP CONECTED>>>>");
                     
                 udpListener = new UdpClient(broadCastEndpoint);
@@ -60,21 +64,34 @@ namespace WPF___Chat.Models
 
                 if (Encoding.UTF8.GetString(msg) == "<<<<UDP CONECTED>>>>")
                 {
-                    udpListener.Send(sendAfter, sendAfter.Length, broadCast);
+                    byte[] sendAfter = Encoding.ASCII.GetBytes(Convert.ToString(listenerEndpoint.Address));
+                    Thread.Sleep(10000);
+                    udpClientII.Send(sendAfter, sendAfter.Length, broadCastII);
 
                     tipo = "Listener";
-                    clientEndpoint = new IPEndPoint(broadCastEndpoint.Address, 12345);
-                }
-                if (Encoding.UTF8.GetString(msg) == "<<<<UDP ALREADY CONECTED>>>>")
-                {
-                    tipo = "Client";
-                    //clientEndpoint = Encoding.UTF8.GetString(msg);
                 }
 
             }
+     
             catch
             {
-                //clientEndpoint = new IPEndPoint(broadCastEndpoint.Address, 12345);
+                try
+                {
+
+                    byte[] msg = new byte[1024];
+
+                    udpListenerII = new UdpClient(broadCastEndpointII);
+
+                    msg = udpListenerII.Receive(ref broadCastEndpointII);
+
+                    clientEndpoint = new IPEndPoint(IPAddress.Parse(Encoding.UTF8.GetString(msg)), 12345);
+                    tipo = "Client";
+
+                }
+                catch
+                {
+                    
+                }
             }
             
         }
@@ -186,14 +203,11 @@ namespace WPF___Chat.Models
         public void Listener()
         {
             
-            if(clientEndpoint != null)
-            {
-                tcpListener = new TcpListener(listenerEndpoint);
-                tcpListener.Start();
-                tcpSocket = tcpListener.AcceptSocket();
+            tcpListener = new TcpListener(listenerEndpoint);
+            tcpListener.Start();
+            tcpSocket = tcpListener.AcceptSocket();
 
-                isConnected = true;
-            }
+            isConnected = true;
         }
     }
 }

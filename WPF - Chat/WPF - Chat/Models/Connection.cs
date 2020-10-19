@@ -41,7 +41,6 @@ namespace WPF___Chat.Models
             try
             {
                 udpClient.Send(send, send.Length, broadCast);
-                listenerEndpoint = new IPEndPoint(IPAddress.Parse(GetLocalIPAddress()), 12345);
             }
             catch
             {
@@ -55,8 +54,8 @@ namespace WPF___Chat.Models
             {
 
                 byte[] msg = new byte[1024];
-                byte[] send = Encoding.ASCII.GetBytes("<<<<UDP CONECTED>>>>");
-                    
+                listenerEndpoint = new IPEndPoint(IPAddress.Parse(GetLocalIPAddress()), 12345);
+
                 udpListener = new UdpClient(broadCastEndpoint);
 
                 msg = udpListener.Receive(ref broadCastEndpoint);
@@ -184,10 +183,9 @@ namespace WPF___Chat.Models
             try
             {
                 tcpClient = new TcpClient();
-                while(clientEndpoint != null)
-                {
+
                     tcpClient.Connect(clientEndpoint.Address, 12345);
-                }
+
                 tcpSocket = tcpClient.Client;
 
                 isConnected = true;

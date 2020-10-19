@@ -41,7 +41,11 @@ namespace WPF___Chat.Dialogs.DialogYesNo
         public string status
         {
             get { return stat; }
-            set { stat = value; }
+            set
+            {
+                stat = value;
+                OnPropertyChanged();
+            }
         }
 
         private string msgSend;
@@ -76,7 +80,8 @@ namespace WPF___Chat.Dialogs.DialogYesNo
         public DialogYesNoViewModel()
         {
             StartConnection();
-            
+
+            status = "Online";
             Thread th = new Thread(() =>
             {
                 while (connection.isConnected)
@@ -100,18 +105,23 @@ namespace WPF___Chat.Dialogs.DialogYesNo
             this.CloseDialogWithResult(parameter as Window, DialogResult.No);
         }
 
-
-
-
         public void StartConnection()
         {
             try {
-                connection.Start();
-                status = "Online";
+                connection.StartUdp();
+                Console.WriteLine(connection.tipo);
+                if (connection.tipo == "Client")
+                {
+                    connection.Client();
+                }
+                else
+                {
+                    connection.Listener();
+                }
             }
             catch
             {
-                status = "Offline";
+
             }
         }
 
@@ -138,7 +148,6 @@ namespace WPF___Chat.Dialogs.DialogYesNo
 
             UpdateChat("[You]: " + msgSend);
 
-            
         }
 
         public void Receive()

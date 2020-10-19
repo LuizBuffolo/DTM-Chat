@@ -16,10 +16,9 @@
             Command="{Binding NoCommand}"  
             CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}" Grid.Column="1"/>
         <TextBox Name="txb_Chat" Text="{Binding chatBox}" HorizontalAlignment="Left" Height="158" Margin="50,56,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="676" Grid.ColumnSpan="2"/>
-        <TextBox x:Name="txb_Send" Text="{Binding sendBox, Mode = TwoWay}" HorizontalAlignment="Left" Height="27" Margin="50,252,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="676" Grid.ColumnSpan="2"/>
-        <Label x:Name="lbl_StatusTtl" Content="Status:" HorizontalAlignment="Left" Height="23" Margin="50,28,0,0" VerticalAlignment="Top" Width="82"/>
-        <Label x:Name="lbl_Status" Content="{Binding status}" HorizontalAlignment="Left" Height="23" Margin="94,28,0,0" VerticalAlignment="Top" Width="82"/>
-
+        <TextBox x:Name="txb_Send" Text="{Binding sendBox}" HorizontalAlignment="Left" Height="27" Margin="50,252,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="676" Grid.ColumnSpan="2"/>
+        <Label Name="lbl_StatusTtl" Content="Status:" HorizontalAlignment="Left" Height="23" Margin="50,28,0,0" VerticalAlignment="Top" Width="82"/>
+        <Label Name="lbl_Status" Content="{Binding status}" HorizontalAlignment="Left" Height="23" Margin="94,28,0,0" VerticalAlignment="Top" Width="82"/>
     </Grid>
 
 </UserControl>

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
@@ -10,24 +11,68 @@ namespace WPF___Chat.Models
     class Connection
     {
         private Socket tcpSocket = null;
+        public string tipo { get; private set; }
         public bool isConnected { get; private set; }
-        private IPEndPoint clientEndpoint = new IPEndPoint(IPAddress.Parse("192.168.10.10"), 30789);
-        private IPEndPoint listenerEndpoint = new IPEndPoint(IPAddress.Parse("192.168.10.10"), 30789);
+        private IPEndPoint clientEndpoint;
+        private IPEndPoint listenerEndpoint;
+        private IPEndPoint broadCast = new IPEndPoint(IPAddress.Broadcast, 30678);
+        private IPEndPoint broadCastEndpoint = new IPEndPoint(IPAddress.Any, 30678);
 
+        private UdpClient udpClient = new UdpClient();
+        private UdpClient udpListener = null;
         private TcpClient tcpClient = null;
         private TcpListener tcpListener = null;
 
-        public void Start()
+        public void StartUdp()
         {
-            tcpSocket = Client();
+            ClientUdp();
+            ListenerUdp();
 
-            if (tcpSocket == null)
-            {
-                tcpSocket = Listener();
-            }
-
-            isConnected = true;
         }
+
+        public void ClientUdp()
+        {
+            byte[] send = Encoding.ASCII.GetBytes("<<<<UDP CONECTED>>>>");
+            try
+            {
+                udpClient.Send(send, send.Length, broadCast);
+                tipo = "Client";
+                listenerEndpoint = new IPEndPoint(IPAddress.Parse(GetLocalIPAddress()), 12345);
+            }
+            catch
+            {
+
+            } 
+        }
+
+        public void ListenerUdp()
+        {
+            try
+            {
+
+                byte[] msg = new byte[1024];
+                byte[] send = Encoding.ASCII.GetBytes("<<<<UDP AFTER CONECTED>>>>");
+                udpListener = new UdpClient(broadCastEndpoint);
+
+                msg = udpListener.Receive(ref broadCastEndpoint);
+                
+
+                if (Encoding.UTF8.GetString(msg) == "<<<<UDP CONECTED>>>>")
+                {
+                    tipo = "Listener";
+                    clientEndpoint = new IPEndPoint(broadCastEndpoint.Address, 12345);
+                }
+
+            }
+            catch
+            {
+                //clientEndpoint = new IPEndPoint(broadCastEndpoint.Address, 12345);
+                tipo = "Client";
+            }
+            
+        }
+
+
 
         public void Stop()
         {
@@ -98,35 +143,48 @@ namespace WPF___Chat.Models
                 return null;
             }
     }
-
-        public Socket Client()
+        public static string GetLocalIPAddress()
+        {
+            var host = Dns.GetHostEntry(Dns.GetHostName());
+            foreach (var ip in host.AddressList)
+            {
+                if (ip.AddressFamily == AddressFamily.InterNetwork)
+                {
+                    return ip.ToString();
+                }
+            }
+            throw new Exception("No network adapters with an IPv4 address in the system!");
+        }
+        public void Client()
         {
             try
             {
-
                 tcpClient = new TcpClient();
-                tcpClient.Connect(listenerEndpoint.Address, 30789);
+                tcpClient.Connect(listenerEndpoint.Address, 12345);
 
                 tcpSocket = tcpClient.Client;
 
-                return tcpSocket;
+                isConnected = true;
             }
 
             catch
             {
-                return null;
+                isConnected = false;
             }
 
         }
 
-        public Socket Listener()
+        public void Listener()
         {
-            tcpListener = new TcpListener(clientEndpoint);
-            tcpListener.Start();
-            tcpSocket = tcpListener.AcceptSocket();
-
-            return tcpSocket;
             
+            if(clientEndpoint != null)
+            {
+                tcpListener = new TcpListener(clientEndpoint);
+                tcpListener.Start();
+                tcpSocket = tcpListener.AcceptSocket();
+
+                isConnected = true;
+            }
         }
     }
 }

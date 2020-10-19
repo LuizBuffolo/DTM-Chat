@@ -16,7 +16,7 @@ namespace WPF___Chat.Dialogs.DialogYesNo
 {
     class DialogYesNoViewModel : DialogViewModelBase
     {
-        private string status = "Offline";
+        private string status;
         private Connection connection = new Connection();
 
         private ICommand noCommand = null;
@@ -29,23 +29,28 @@ namespace WPF___Chat.Dialogs.DialogYesNo
         public DialogYesNoViewModel()
         {
             StartConnection();
-            this.noCommand = new RelayCommand(OnNoClicked);
-
+            
             Thread th = new Thread(() =>
             {
-                while (true)
+                while (connection.isConnected)
                 {
                     Receive();
+                    status = "Online";
                 }
+                status = "Offline";
             });
 
             th.Start();
+
+            
+            this.noCommand = new RelayCommand(OnNoClicked);
+            
         }
 
         private void OnNoClicked(object parameter)
         {
-            //this.CloseDialogWithResult(parameter as Window, DialogResult.No);
-            Receive();
+            StopConnection();
+            this.CloseDialogWithResult(parameter as Window, DialogResult.No);
         }
 
         private ICommand _btn_Send;
@@ -90,6 +95,23 @@ namespace WPF___Chat.Dialogs.DialogYesNo
             }
         }
 
+        public void StopOtherside()
+        {
+            connection.StopOtherside();
+        }
+
+        public void StopConnection()
+        {
+            try
+            {
+                connection.Stop();
+                status = "Offline";
+            }
+            catch
+            {
+                status = "Online";
+            }
+        }
         public void Send()
         {
             connection.SendMessage(msgSend);

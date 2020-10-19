@@ -10,7 +10,7 @@ namespace WPF___Chat.Models
     class Connection
     {
         private Socket tcpSocket = null;
-
+        public bool isConnected { get; private set; }
         private IPEndPoint clientEndpoint = new IPEndPoint(IPAddress.Parse("192.168.10.10"), 30789);
         private IPEndPoint listenerEndpoint = new IPEndPoint(IPAddress.Parse("192.168.10.10"), 30789);
 
@@ -25,6 +25,21 @@ namespace WPF___Chat.Models
             {
                 tcpSocket = Listener();
             }
+
+            isConnected = true;
+        }
+
+        public void Stop()
+        {
+            SendMessage("<<<<The another PC was Stopped the connection>>>>");
+            tcpSocket.Shutdown(SocketShutdown.Both);
+            isConnected = false;
+        }
+
+        public void StopOtherside()
+        {
+            tcpSocket.Shutdown(SocketShutdown.Both);
+            isConnected = false;
         }
 
         public void SendMessage(string chat)
@@ -45,14 +60,20 @@ namespace WPF___Chat.Models
             stringMessage = Encoding.UTF8.GetString(message);
 
             int x = 0;
-            while(stringMessage[x] != '\0') {
+            while (stringMessage[x] != '\0') {
                 shortMessage.Add(stringMessage[x]);
                 x++;
             }
 
             result = new string(shortMessage.ToArray());
 
-            return result;
+            if (result == "<<<<The another PC was Stopped the connection>>>>")
+            { 
+                StopOtherside();
+                return result;
+            }
+            else
+                return result;
         }
 
         public Socket Client()
@@ -82,7 +103,7 @@ namespace WPF___Chat.Models
             tcpSocket = tcpListener.AcceptSocket();
 
             return tcpSocket;
-            // tcpListener.Stop();
+            
         }
     }
 }

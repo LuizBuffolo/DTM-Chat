@@ -44,37 +44,60 @@ namespace WPF___Chat.Models
 
         public void SendMessage(string chat)
         {
-            byte[] message = Encoding.ASCII.GetBytes(chat);
-            tcpSocket.Send(message);
-            //Console.WriteLine("Source Send: " + Encoding.UTF8.GetString(message));
+            try
+            {
+                byte[] message = Encoding.ASCII.GetBytes(chat);
+                tcpSocket.Send(message);
+                //Console.WriteLine("Source Send: " + Encoding.UTF8.GetString(message));
+            }
+            catch (Exception ex) when (ex is ArgumentNullException
+                                    || ex is SocketException
+                                    || ex is ObjectDisposedException)
+            {
+                Console.WriteLine($"Error: {ex}, {ex.Message}");
+            }
+
         }
 
         public string ReceiveMessage()
         {
-            string stringMessage;
-            string result;
-            byte[] message = new byte[124];
-            List<char> shortMessage = new List<char>();
-
-            tcpSocket.Receive(message);
-            stringMessage = Encoding.UTF8.GetString(message);
-
-            int x = 0;
-            while (stringMessage[x] != '\0') {
-                shortMessage.Add(stringMessage[x]);
-                x++;
-            }
-
-            result = new string(shortMessage.ToArray());
-
-            if (result == "<<<<The another PC was Stopped the connection>>>>")
+            try
             { 
-                StopOtherside();
-                return result;
+                string stringMessage;
+                string result;
+                byte[] message = new byte[124];
+                List<char> shortMessage = new List<char>();
+
+                tcpSocket.Receive(message);
+                stringMessage = Encoding.UTF8.GetString(message);
+
+                int x = 0;
+                while (stringMessage[x] != '\0')
+                {
+                    shortMessage.Add(stringMessage[x]);
+                    x++;
+                }
+
+                result = new string(shortMessage.ToArray());
+
+                if (result == "<<<<The another PC was Stopped the connection>>>>")
+                { 
+                    StopOtherside();
+                    return result;
+                }
+                else
+                {
+                    return result;
+                }  
             }
-            else
-                return result;
-        }
+             catch (Exception ex) when(ex is ArgumentNullException
+                                        || ex is SocketException
+                                        || ex is ObjectDisposedException)
+            {
+                Console.WriteLine($"Error: {ex}, {ex.Message}");
+                return null;
+            }
+    }
 
         public Socket Client()
         {

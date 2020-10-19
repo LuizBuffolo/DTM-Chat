@@ -1,21 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
-using System.Net.Sockets;
 using System.Windows;
-using System.Windows.Input;
-using WPF___Chat.Dialogs.DialogService;
-using WPF___Chat.Models;
-using System.Threading;
-using static WPF___Chat.Dialogs.DialogService.DialogResultEnum;
+using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
+using WPF___Chat.Models;
 
-namespace WPF___Chat.Dialogs.DialogYesNo
+namespace WPF___Chat.Dialogs.Chat
 {
-    class DialogYesNoViewModel : DialogViewModelBase
+    /// <summary>
+    /// Interaction logic for Chat.xaml
+    /// </summary>
+    public partial class Chat : Window
     {
+        public Chat()
+        {
+            InitializeComponent();
+            StartConnection();
+        }
+
         private string status = "Offline";
         private Connection connection = new Connection();
 
@@ -26,26 +38,11 @@ namespace WPF___Chat.Dialogs.DialogYesNo
             set { noCommand = value; }
         }
 
-        public DialogYesNoViewModel()
-        {
-            StartConnection();
-            this.noCommand = new RelayCommand(OnNoClicked);
-
-            Thread th = new Thread(() =>
-            {
-                while (true)
-                {
-                    Receive();
-                }
-            });
-
-            th.Start();
-        }
-
         private void OnNoClicked(object parameter)
         {
             //this.CloseDialogWithResult(parameter as Window, DialogResult.No);
             Receive();
+
         }
 
         private ICommand _btn_Send;
@@ -67,7 +64,18 @@ namespace WPF___Chat.Dialogs.DialogYesNo
         public string chatBox
         {
             get { return historicoChat; }
-            set { historicoChat = value; }
+            set
+            {
+                historicoChat = value;
+                OnPropertyChanged(nameof(chatBox));
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected void OnPropertyChanged([CallerMemberName] string propertyName = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         private string msgSend;
@@ -80,7 +88,8 @@ namespace WPF___Chat.Dialogs.DialogYesNo
 
         public void StartConnection()
         {
-            try {
+            try
+            {
                 connection.Start();
                 status = "Online";
             }
@@ -96,7 +105,6 @@ namespace WPF___Chat.Dialogs.DialogYesNo
 
             UpdateChat("[You]: " + msgSend);
 
-            
         }
 
         public void Receive()
@@ -104,8 +112,7 @@ namespace WPF___Chat.Dialogs.DialogYesNo
             string msgReceived;
             msgReceived = connection.ReceiveMessage();
 
-            if(msgReceived != "")
-                UpdateChat("[Stranger]: " + msgReceived);
+            UpdateChat("[Stranger]: " + msgReceived);
         }
 
         public void UpdateChat(string message)
@@ -114,13 +121,10 @@ namespace WPF___Chat.Dialogs.DialogYesNo
             {
                 historicoChat = message;
             }
-            else {
+            else
+            {
                 historicoChat = historicoChat + "\n\n" + message;
             }
-
-            //descobrir como fazer binding para enviar para o chatBox
-            Console.WriteLine(historicoChat);
-
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -30,16 +31,28 @@ namespace WPF___Chat.Models
         {
             byte[] message = Encoding.ASCII.GetBytes(chat);
             tcpSocket.Send(message);
-            Console.WriteLine("Source Send: " + Encoding.UTF8.GetString(message));
+            //Console.WriteLine("Source Send: " + Encoding.UTF8.GetString(message));
         }
 
         public string ReceiveMessage()
         {
-            byte[] message = new byte[30];
-            tcpSocket.Receive(message);
-            Console.WriteLine("Dest Receive: " + Encoding.UTF8.GetString(message));
+            string stringMessage;
+            string result;
+            byte[] message = new byte[124];
+            List<char> shortMessage = new List<char>();
 
-            return Encoding.UTF8.GetString(message);
+            tcpSocket.Receive(message);
+            stringMessage = Encoding.UTF8.GetString(message);
+
+            int x = 0;
+            while(stringMessage[x] != '\0') {
+                shortMessage.Add(stringMessage[x]);
+                x++;
+            }
+
+            result = new string(shortMessage.ToArray());
+
+            return result;
         }
 
         public Socket Client()

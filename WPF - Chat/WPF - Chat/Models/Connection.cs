@@ -36,7 +36,6 @@ namespace WPF___Chat.Models
             try
             {
                 udpClient.Send(send, send.Length, broadCast);
-                tipo = "Client";
                 listenerEndpoint = new IPEndPoint(IPAddress.Parse(GetLocalIPAddress()), 12345);
             }
             catch
@@ -51,7 +50,9 @@ namespace WPF___Chat.Models
             {
 
                 byte[] msg = new byte[1024];
-                byte[] send = Encoding.ASCII.GetBytes("<<<<UDP AFTER CONECTED>>>>");
+                byte[] sendAfter = Encoding.ASCII.GetBytes("<<<<UDP AFTER CONECTED>>>>");
+                byte[] send = Encoding.ASCII.GetBytes("<<<<UDP CONECTED>>>>");
+                    
                 udpListener = new UdpClient(broadCastEndpoint);
 
                 msg = udpListener.Receive(ref broadCastEndpoint);
@@ -59,15 +60,21 @@ namespace WPF___Chat.Models
 
                 if (Encoding.UTF8.GetString(msg) == "<<<<UDP CONECTED>>>>")
                 {
+                    udpListener.Send(sendAfter, sendAfter.Length, broadCast);
+
                     tipo = "Listener";
                     clientEndpoint = new IPEndPoint(broadCastEndpoint.Address, 12345);
+                }
+                if (Encoding.UTF8.GetString(msg) == "<<<<UDP ALREADY CONECTED>>>>")
+                {
+                    tipo = "Client";
+                    //clientEndpoint = Encoding.UTF8.GetString(msg);
                 }
 
             }
             catch
             {
                 //clientEndpoint = new IPEndPoint(broadCastEndpoint.Address, 12345);
-                tipo = "Client";
             }
             
         }
@@ -160,8 +167,10 @@ namespace WPF___Chat.Models
             try
             {
                 tcpClient = new TcpClient();
-                tcpClient.Connect(listenerEndpoint.Address, 12345);
-
+                while(clientEndpoint != null)
+                {
+                    tcpClient.Connect(clientEndpoint.Address, 12345);
+                }
                 tcpSocket = tcpClient.Client;
 
                 isConnected = true;
@@ -179,7 +188,7 @@ namespace WPF___Chat.Models
             
             if(clientEndpoint != null)
             {
-                tcpListener = new TcpListener(clientEndpoint);
+                tcpListener = new TcpListener(listenerEndpoint);
                 tcpListener.Start();
                 tcpSocket = tcpListener.AcceptSocket();
 

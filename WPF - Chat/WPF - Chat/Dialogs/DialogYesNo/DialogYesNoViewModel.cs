@@ -110,13 +110,13 @@ namespace WPF___Chat.Dialogs.DialogYesNo
             try {
                 connection.StartUdp();
                 Console.WriteLine(connection.tipo);
-                if (connection.tipo == "Client")
+                if (connection.tipo == "Listener")
                 {
-                    connection.Client();
+                    connection.Listener();
                 }
                 else
                 {
-                    connection.Listener();
+                    connection.Client();
                 }
             }
             catch

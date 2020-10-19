@@ -11,13 +11,45 @@ using WPF___Chat.Models;
 using System.Threading;
 using static WPF___Chat.Dialogs.DialogService.DialogResultEnum;
 using System.Windows.Data;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace WPF___Chat.Dialogs.DialogYesNo
 {
-    class DialogYesNoViewModel : DialogViewModelBase
+    class DialogYesNoViewModel : DialogViewModelBase,  INotifyPropertyChanged
     {
-        private string status;
         private Connection connection = new Connection();
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected void OnPropertyChanged([CallerMemberName] string name = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
+
+        //===============[BINDING'S]
+        private string historicoChat;
+        public string chatBox
+        {
+            get { return historicoChat; }
+            set
+            {
+                historicoChat = value;
+                OnPropertyChanged();
+            }
+        }
+        private string stat;
+        public string status
+        {
+            get { return stat; }
+            set { stat = value; }
+        }
+
+        private string msgSend;
+        public string sendBox
+        {
+            get { return msgSend; }
+            set { msgSend = value; }
+        }
 
         private ICommand noCommand = null;
         public ICommand NoCommand
@@ -25,6 +57,21 @@ namespace WPF___Chat.Dialogs.DialogYesNo
             get { return noCommand; }
             set { noCommand = value; }
         }
+
+        private ICommand _btn_Send;
+
+        public ICommand Btn_Send
+        {
+            get
+            {
+                if (_btn_Send == null)
+                {
+                    _btn_Send = new RelayCommand(param => this.Send());
+                }
+                return _btn_Send;
+            }
+        }
+        //[BINDING'S]===============
 
         public DialogYesNoViewModel()
         {
@@ -53,35 +100,8 @@ namespace WPF___Chat.Dialogs.DialogYesNo
             this.CloseDialogWithResult(parameter as Window, DialogResult.No);
         }
 
-        private ICommand _btn_Send;
 
-        public ICommand Btn_Send
-        {
-            get
-            {
-                if (_btn_Send == null)
-                {
-                    _btn_Send = new RelayCommand(param => this.Send());
-                }
-                return _btn_Send;
-            }
-        }
 
-        private string historicoChat;
-
-        public string chatBox
-        {
-            get { return historicoChat; }
-            set { historicoChat = value; }
-        }
-
-        private string msgSend;
-
-        public string sendBox
-        {
-            get { return msgSend; }
-            set { msgSend = value; }
-        }
 
         public void StartConnection()
         {
@@ -134,15 +154,11 @@ namespace WPF___Chat.Dialogs.DialogYesNo
         {
             if (historicoChat == "")
             {
-                historicoChat = message;
+                chatBox = message;
             }
             else {
-                historicoChat = historicoChat + "\n\n" + message;
+                chatBox = historicoChat + "\n" + message;
             }
-
-            //descobrir como fazer binding para enviar para o chatBox
-            Console.WriteLine(historicoChat);
-
         }
     }
 }

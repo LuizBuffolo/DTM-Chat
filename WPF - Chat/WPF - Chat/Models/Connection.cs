@@ -66,8 +66,14 @@ namespace WPF___Chat.Models
                     byte[] sendAfter = Encoding.ASCII.GetBytes(Convert.ToString(listenerEndpoint.Address));
                     Thread.Sleep(10000);
                     udpClientII.Send(sendAfter, sendAfter.Length, broadCastII);
+                    udpListener.Send(sendAfter, sendAfter.Length, broadCast);
 
                     tipo = "Listener";
+                }
+                else
+                {
+                    clientEndpoint = new IPEndPoint(IPAddress.Parse(Encoding.UTF8.GetString(msg)), 12345);
+                    tipo = "Client";
                 }
 
             }
@@ -89,7 +95,7 @@ namespace WPF___Chat.Models
                 }
                 catch
                 {
-                    
+
                 }
             }
             
@@ -184,7 +190,7 @@ namespace WPF___Chat.Models
             {
                 tcpClient = new TcpClient();
 
-                    tcpClient.Connect(clientEndpoint.Address, 12345);
+                tcpClient.Connect(clientEndpoint.Address, 12345);
 
                 tcpSocket = tcpClient.Client;
 

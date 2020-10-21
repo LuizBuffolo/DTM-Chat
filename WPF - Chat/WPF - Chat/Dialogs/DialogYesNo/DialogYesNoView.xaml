@@ -11,7 +11,7 @@
             <ColumnDefinition Width="37*"/>
         </Grid.ColumnDefinitions>
         <Button Content="Send" HorizontalAlignment="Left" Margin="556,284,0,0" VerticalAlignment="Top" Width="75"   
-            Command="{Binding Btn_Send}" Grid.ColumnSpan="2"/>
+            Command="{Binding Btn_Send}" Grid.ColumnSpan="2" IsEnabled="{Binding Btn_SendControl}"/>
         <Button Content="Exit" HorizontalAlignment="Left" Margin="82,284,0,0" VerticalAlignment="Top" Width="75"   
             Command="{Binding NoCommand}"  
             CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}" Grid.Column="1"/>

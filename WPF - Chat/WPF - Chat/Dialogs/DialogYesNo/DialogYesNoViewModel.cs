@@ -37,6 +37,18 @@ namespace WPF___Chat.Dialogs.DialogYesNo
                 OnPropertyChanged();
             }
         }
+
+        private bool btn_SendControl;
+        public bool Btn_SendControl
+        {
+            get { return btn_SendControl; }
+            set
+            {
+                btn_SendControl = value;
+                OnPropertyChanged();
+            }
+        }
+
         private string stat;
         public string status
         {
@@ -51,7 +63,7 @@ namespace WPF___Chat.Dialogs.DialogYesNo
         private string msgSend;
         public string sendBox
         {
-            get { return msgSend; }
+            get { return ""; }
             set { msgSend = value; }
         }
 
@@ -82,6 +94,7 @@ namespace WPF___Chat.Dialogs.DialogYesNo
             StartConnection();
 
             status = "Online";
+            Btn_SendControl = connection.isConnected;
             Thread th = new Thread(() =>
             {
                 while (connection.isConnected)
@@ -90,13 +103,12 @@ namespace WPF___Chat.Dialogs.DialogYesNo
                     status = "Online";
                 }
                 status = "Offline";
+                Btn_SendControl = connection.isConnected;
             });
 
             th.Start();
-
-            
-            this.noCommand = new RelayCommand(OnNoClicked);
-            
+                        
+            this.noCommand = new RelayCommand(OnNoClicked);            
         }
 
         private void OnNoClicked(object parameter)
@@ -148,6 +160,7 @@ namespace WPF___Chat.Dialogs.DialogYesNo
 
             UpdateChat("[You]: " + msgSend);
 
+            sendBox = "";
         }
 
         public void Receive()

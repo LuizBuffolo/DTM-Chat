@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:WPF___Chat.Dialogs.DialogService"
         mc:Ignorable="d"
         WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize"
         SizeToContent="WidthAndHeight"
         Title="DialogWindow" Height="450" Width="800">
     <ContentPresenter x:Name="ContentPresenter" Content="{Binding}">

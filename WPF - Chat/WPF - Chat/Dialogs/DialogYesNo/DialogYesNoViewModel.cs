@@ -71,7 +71,6 @@ namespace WPF___Chat.Dialogs.DialogYesNo
         public ICommand NoCommand
         {
             get { return noCommand; }
-            set { noCommand = value; }
         }
 
         private ICommand _btn_Send;

@@ -8,6 +8,6 @@
         DataContext="{StaticResource ResourceKey=MainWindowViewModel}"  
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-        <Button Content="Button" Height="20" Width="50" Command="{Binding OpenDialogCommand}" />
+        <Button Content="Start Chatting" Height="20" Width="100" Command="{Binding OpenDialogCommand}" />
     </Grid>
 </Window>

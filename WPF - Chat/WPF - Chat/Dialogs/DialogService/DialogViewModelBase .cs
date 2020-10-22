@@ -18,6 +18,7 @@ namespace WPF___Chat.Dialogs.DialogService
 
         public void CloseDialogWithResult(Window dialog, DialogResult result)
         {
+            dialog.Close();
             this.UserDialogResult = result;
             if(dialog != null)
             {
